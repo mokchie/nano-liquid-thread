@@ -2,31 +2,35 @@
 
 This repository contains the LAMMPS input scripts and pre- and post-processing codes used in the study 
 > *Instability of nano liquid threads in a saturated or supersaturated vapor environment*
+> 
 > *Chaojie Mo, Xiaocong Yang, Qing-fei Fu, Longfei Chen*
+> 
 > Journal of Fluid Mechanics (submitted in June 2025, revised in Dec 2025)
 
 The scripts allow reproduction of the numerical procedures and post-processing workflow described in the paper.
 
 ## 1. Contents
+
+```text
 .
 |-- README.md
-|-- pythonmod                     # Python modules used by pre- and post-processing codes
-|   |-- create_atom.py            # Module used in pre-processing
-|   |-- variables3.py             # Read and set variables in LAMMPS input files
-|   `-- readvel3.py               # Read LAMMPS output data files
+|-- pythonmod
+|   |-- create_atom.py        (pre-processing module)
+|   |-- variables3.py         (read/set variables in LAMMPS input files)
+|   `-- readvel3.py           (read LAMMPS output data files)
 |
-|-- long_thread                   # Long liquid thread simulations
-|   |-- S2.0l                     # Supersaturation ratio S = 2.0
-|   |   |-- atoms                 # Initial LAMMPS data (atoms.data) and visualization file (atoms.xyz)
-|   |   |-- data                  # LAMMPS output directory
-|   |   |-- domain.py             # Pre-processing: generate liquid thread in vapor environment
-|   |   |-- in.run                # LAMMPS input script
-|   |   |-- plotone.py            # Evolution of thread profile
-|   |   |-- plotspectrum.py       # Spectrum computation
-|   |   |-- rho1398.data          # Equilibrium liquid argon data
-|   |   `-- rho6.44.data          # Equilibrium vapor argon data
+|-- long_thread               (long liquid thread simulations)
+|   |-- S2.0l                 (supersaturation ratio S = 2.0)
+|   |   |-- atoms             (initial atoms.data and atoms.xyz)
+|   |   |-- data              (LAMMPS output directory)
+|   |   |-- domain.py         (pre-processing: generate liquid thread)
+|   |   |-- in.run            (LAMMPS input script)
+|   |   |-- plotone.py        (thread profile evolution)
+|   |   |-- plotspectrum.py   (spectrum computation)
+|   |   |-- rho1398.data      (equilibrium liquid argon)
+|   |   `-- rho6.44.data      (equilibrium vapor argon)
 |   |
-|   |-- S3.0l                     # Supersaturation ratio S = 3.0
+|   |-- S3.0l                 (supersaturation ratio S = 3.0)
 |   |   |-- atoms
 |   |   |-- data
 |   |   |-- domain.py
@@ -36,7 +40,7 @@ The scripts allow reproduction of the numerical procedures and post-processing w
 |   |   |-- rho1398.data
 |   |   `-- rho9.66.data
 |   |
-|   `-- S4.0l                     # Supersaturation ratio S = 4.0
+|   `-- S4.0l                 (supersaturation ratio S = 4.0)
 |       |-- atoms
 |       |-- data
 |       |-- domain.py
@@ -46,18 +50,18 @@ The scripts allow reproduction of the numerical procedures and post-processing w
 |       |-- rho12.88.data
 |       `-- rho1398.data
 |
-`-- short_thread                  # Short liquid thread simulations
-    |-- S2.0s                     # Supersaturation ratio S = 2.0
+`-- short_thread              (short liquid thread simulations)
+    |-- S2.0s                 (supersaturation ratio S = 2.0)
     |   |-- atoms
     |   |-- data
     |   |-- domain.py
     |   |-- in.run
-    |   |-- plothmax.py           # Maximum perturbation amplitude
+    |   |-- plothmax.py       (maximum perturbation amplitude)
     |   |-- plotone.py
     |   |-- rho1398.data
     |   `-- rho6.44.data
     |
-    |-- S3.0s                     # Supersaturation ratio S = 3.0
+    |-- S3.0s                 (supersaturation ratio S = 3.0)
     |   |-- atoms
     |   |-- data
     |   |-- domain.py
@@ -67,17 +71,17 @@ The scripts allow reproduction of the numerical procedures and post-processing w
     |   |-- rho1398.data
     |   `-- rho9.66.data
     |
-    `-- S4.0s                     # Supersaturation ratio S = 4.0
+    `-- S4.0s                 (supersaturation ratio S = 4.0)
         |-- atoms
         |-- data
         |-- domain.py
         |-- in.run
-        |-- plot2H1.py            # First-order Fourier coefficient
+        |-- plot2H1.py        (first-order Fourier coefficient)
         |-- plothmax.py
         |-- plotone.py
         |-- rho12.88.data
         `-- rho1398.data
-
+```
 ---
 
 ## 2. Requirements
