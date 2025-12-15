@@ -108,6 +108,7 @@ The scripts allow reproduction of the numerical procedures and post-processing w
     python domain.py
 
 This will generate the files "atoms.data" and "atoms.xyz" in the "atoms" directory.
+
 ---
 
 ## 4. Running the simulations
@@ -115,6 +116,7 @@ This will generate the files "atoms.data" and "atoms.xyz" in the "atoms" directo
     mpirun -np 64 lmp -in in.run
 
 The will start the simulation and the output data files (lammps xyz trajectory files and chunk-averaged density distribution files) will be generated and saved to the "data" directory.
+
 ---
 
 ## 5. Post-processing
