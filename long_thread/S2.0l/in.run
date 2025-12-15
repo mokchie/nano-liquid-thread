@@ -1,0 +1,111 @@
+log log.lammps
+label loop
+variable fn index 101 102 103 104 105 106 107 108 109 110 111 112 113 114 115 116 117 118 119 120 121 122 123 124 125 126 127 128 129 130
+units real
+dimension 3
+boundary p p p
+atom_style full
+variable KR equal 1.1232464908886226
+variable S equal 2.0
+variable P0 equal 0.555466415056706
+variable PS equal ${P0}*${S}
+variable R0 equal 50.0
+variable zhi equal 250.0
+variable zlo equal -250.0
+variable yhi equal 250.0
+variable ylo equal -250.0
+variable xhi equal 2509.602236
+variable xlo equal -2509.602236
+variable L equal 5019.204472
+variable Lz equal 500
+variable Ly equal 500
+variable Lx equal 5019.204472
+variable dx equal ${Lx}/100*1.00001
+variable Ar_atom_typ equal 1
+variable sample_freq equal 100000
+variable tot equal 600000
+variable wmc equal 10
+variable ylol equal ${ylo}+${wmc}
+variable yhil equal ${yhi}-${wmc}
+variable zlol equal ${zlo}+${wmc}
+variable zhil equal ${zhi}-${wmc}
+
+variable wmcc equal 40
+variable ylolc equal ${ylo}+${wmcc}
+variable yhilc equal ${yhi}-${wmcc}
+variable zlolc equal ${zlo}+${wmcc}
+variable zhilc equal ${zhi}-${wmcc}
+
+variable rc equal 15.0
+variable a0 equal 1.0
+
+variable T equal 84.09
+variable Dt equal 5.0
+processors * 1 1
+neighbor 2.0 bin
+
+lattice fcc ${a0}
+
+pair_style lj/cut ${rc}
+pair_modify mix arithmetic
+
+read_data atoms/atoms.data
+
+region lower block EDGE EDGE EDGE ${ylol} EDGE EDGE units box
+region upper block EDGE EDGE ${yhil} EDGE EDGE EDGE units box
+
+region front block EDGE EDGE ${ylol} ${yhil} EDGE ${zlol} units box
+region back block EDGE EDGE ${ylol} ${yhil} ${zhil} EDGE units box
+
+region reg_evap union 4 lower upper front back
+
+region lowerc block EDGE EDGE EDGE ${ylolc} EDGE EDGE units box
+region upperc block EDGE EDGE ${yhilc} EDGE EDGE EDGE units box
+
+region frontc block EDGE EDGE ${ylolc} ${yhilc} EDGE ${zlolc} units box
+region backc block EDGE EDGE ${ylolc} ${yhilc} ${zhilc} EDGE units box
+
+region reg_gasrho union 4 lowerc upperc frontc backc
+
+group liquid type ${Ar_atom_typ}
+
+compute mdtemp liquid temp
+compute_modify mdtemp dynamic/dof yes
+compute mdpress all pressure mdtemp
+thermo 100
+thermo_style custom step temp vol ke pe etotal press
+thermo_modify temp mdtemp press mdpress lost warn flush yes
+timestep ${Dt}
+
+#minimize 1.0e-4 1.0e-6 1000 10000
+
+#reset_timestep 0
+neigh_modify every 5 check yes
+
+#velocity liquid create ${T} ${fn} rot yes dist gaussian
+
+fix 1 liquid langevin ${T} ${T} $(100*dt) ${fn}
+fix 2 liquid nve
+run 6000
+reset_timestep 0
+unfix 1
+unfix 2
+
+fix 1 liquid nvt temp ${T} ${T} $(100*dt)
+fix_modify 1 temp mdtemp
+fix 2 liquid  gcmc 10 60 0 ${Ar_atom_typ} ${fn} ${T} -12.0 1.0 pressure ${PS} region lower
+fix 3 liquid  gcmc 10 60 0 ${Ar_atom_typ} ${fn} ${T} -12.0 1.0 pressure ${PS} region upper
+fix 4 liquid  gcmc 10 60 0 ${Ar_atom_typ} ${fn} ${T} -12.0 1.0 pressure ${PS} region front
+fix 5 liquid  gcmc 10 60 0 ${Ar_atom_typ} ${fn} ${T} -12.0 1.0 pressure ${PS} region back
+compute rhochunk liquid chunk/atom bin/1d x lower ${dx}
+fix 12 liquid ave/chunk 1 2000 2000 rhochunk density/mass ave one file data/rho-${fn}.profile
+compute gasrhochunk liquid chunk/atom bin/1d x lower ${dx} region reg_gasrho
+fix 13 liquid ave/chunk 1 2000 2000 gasrhochunk density/mass ave one file data/gasrho-${fn}.profile
+
+dump 1 all custom ${sample_freq} data/lammpstrj-${fn}.data id type x y z mol
+#restart 10000 restart1.data restart2.data
+run ${tot}
+
+clear
+next fn
+jump SELF loop
